@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 import com.example.models.PaymentMethod;
 import com.example.models.PaymentModel;
 import com.example.models.PaymentStatus;
+import com.example.models.PaymentStatusUpdateBody;
 import com.example.repositories.PaymentRepository;
 import com.example.utils.BadRequestException;
 import com.example.utils.NotFoundException;
@@ -34,7 +35,7 @@ public class PaymentService {
     return paymentRepository.save(payment);
   }
 
-  public PaymentModel updateStatus(Long id, PaymentStatus newStatus) {
+  public PaymentModel updateStatus(Long id, PaymentStatusUpdateBody newStatus) {
     PaymentModel payment = paymentRepository.findById(id).orElse(null);
 
     if (payment == null) {
@@ -52,11 +53,11 @@ public class PaymentService {
       throw new BadRequestException("Failed processing can only change to pending");
     }
 
-    if (payment.getStatus().compareTo(newStatus) == 0) {
+    if (payment.getStatus().compareTo(newStatus.getStatus()) == 0) {
       throw new BadRequestException("Unchanged status");
     }
 
-    payment.setStatus(newStatus);
+    payment.setStatus(newStatus.getStatus());
 
     return paymentRepository.save(payment);
   }
